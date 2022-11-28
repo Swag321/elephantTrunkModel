@@ -1,0 +1,38 @@
+clc; clear all; close all;
+% SIMPLE BOUNDARY %
+rectMinX = 2;
+rectMinY = 0;
+rectW = 4;
+rectH = 3;
+
+rectangle('Position',[rectMinX rectMinY rectW rectH])
+axis([0 10 0 10])
+hold on;
+% TARGET %
+targetX = 9;
+targetY = 1.5;
+plot(targetX,targetY,'Marker','diamond','MarkerSize',7)
+hold off;
+
+% Let arc follow a quadratic function. Scan a grid for parameters (a,b)
+% that get within 0.0001 of position x = 9, y = 1.5
+tolerance = 0.005;
+arcQuad = @(a,b,x) a*x^2 + b*x;
+diffAQ = @(a,b,x) 2*a*x + b;
+syms x;
+
+% Determine parameter values whose corresponding arcs do not hit the
+% obstacle. This check will be more difficult for more obstacles, and may
+% depend on the actual nature of the obstacle itself. Get the arclengths
+% for valid parameter sets.
+paramLengths = [];
+for av = -5:0.001:0
+    for bv = 0:0.001:10
+        if abs(arcQuad(av,bv,targetX) - targetY) < tolerance && arcQuad(av,bv,rectMinX) > rectMinY + rectH && arcQuad(av,bv,rectMinX + rectW) > rectMinY + rectH
+            % disp(av + " " + bv + "       " + abs(arcQuad(av,bv,targetX) - targetY));
+            integrand = sqrt(1 + diffAQ(av,bv,x)^2);
+            testAL = int(integrand,[0 targetX]); % Arc length = int [lower,upper] sqrt(1 + (derivative of fn)^2) dx
+            paramLengths = [paramLengths;[av bv testAL]];
+        end
+    end
+end
