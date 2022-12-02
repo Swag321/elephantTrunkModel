@@ -1,0 +1,19 @@
+function pos= trunkPos(N,optimal)
+    s=linspace(0,1,N);
+    L=1;%length of the arm 
+    a=optimal(1);b=optimal(2);c=optimal(3);d=optimal(4);
+    theta=a+b*s+c*s.^2+d*s.^3;
+    x(1)=0;y(1)=0; %we assume the arm always starts at the origin (x=0,y=0)
+    dl=L/(N-1);
+    for i=2:N
+        x(i)=x(i-1)+dl*cos(theta(i-1));
+        y(i)=y(i-1)+dl*sin(theta(i-1));
+    end
+    pos(:,1)=x;pos(:,2)=y;
+end
+
+
+
+function [theta] = computeJA(x0,y0,x1,y1)
+    theta = atan((y1 - y0) / (x1 - x0));
+end
