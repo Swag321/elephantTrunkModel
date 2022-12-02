@@ -1,0 +1,57 @@
+#include <Stepper.h>
+#include<math.h>
+
+int stepsPerRevolution=2048;
+int motSpeed=12; //Will be independent variable in experiment.
+int motDir=2048;
+int revolutions = 500; //Will be another indpendent variable in experiment.
+int rD = 0; //Revolution Divisor to scale experiment. 
+float hP; //Horizontal Projection.
+int trunkLength = 22; //22 meters long.
+unsigned long t; //time in millisecond.
+float radius = 0.2;
+float aV; 
+Stepper myStepper(stepsPerRevolution, 8,10,9,11); //Pins that motor is connected to. IN1 > 8. IN2 > 9. IN3 > 10. IN4 > 11.
+void setup() {
+  // put your setup code here, to run once:
+Serial.begin(9600);
+myStepper.setSpeed(motSpeed);
+}
+
+// void loop() {
+//   myStepper.step(100);
+// }
+
+void loop() {
+  Serial.print("Enter the horizontal projection value: ");
+  delay(3000);
+  while (Serial.available()) { //Waits for horizontal projection value = hP.
+
+    hP = Serial.parseFloat();
+    Serial.println(hP);
+    Serial.print("Theta = ");
+    Serial.print(acos(hP/trunkLength) * (180/M_PI)); Serial.println(" degrees"); //Degrees
+    t = millis(); //Starts timer.
+    myStepper.step(motDir*-revolutions); //turns full revolutions the number of times dictated by revolutions variable. 
+    Serial.print("----------------");
+    Serial.print(revolutions);
+    Serial.println(" Revolutions----------------");
+    Serial.println();
+    t = millis() - t; //Captures time until now.
+    Serial.print("t = "); Serial.print(t/1000); Serial.print(" revolutions = "); Serial.println(revolutions); //Print all variables.
+    Serial.print("Angular Velocity: ");
+    aV = 2*M_PI*(revolutions)/(t/1000); //Total revolutions * 2pi over change in time to get angular velocity.
+    Serial.println(aV); 
+    Serial.print("Speed: ");
+    Serial.println(abs(aV) * radius); // Absolute of angular Velocity times the radius to get speed. 
+    Serial.println();
+    delay(3000);
+    myStepper.step(motDir*revolutions); //Go back to starting position.
+    revolutions = revolutions/2;
+    Serial.println("Next Revolution.");
+
+  }
+
+Serial.println("Done!! ------------------------------");
+}
+
