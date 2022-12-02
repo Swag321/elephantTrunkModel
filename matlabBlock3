@@ -1,0 +1,20 @@
+% PLOT WITH CONFIGURATION(S)
+% SIMPLE BOUNDARY %
+rectMinX = 2;
+rectMinY = 0;
+rectW = 4;
+rectH = 3;
+
+rectangle('Position',[rectMinX rectMinY rectW rectH])
+axis([0 10 0 10])
+hold on;
+% TARGET %
+targetX = 9;
+targetY = 1.5;
+plot(targetX,targetY,'Marker','diamond','MarkerSize',7)
+for j = 1:size(configs,1)
+    plot([0 configs(j,1)], [0 configs(j,2)],'LineStyle','-.'); drawnow; hold on;
+    plot([configs(j,1) targetX], [configs(j,2) targetY],'LineStyle','-.'); drawnow; hold on;
+end
+title("2-DOF Arm Results for Quadratic Interpolation")
+subtitle("Beginning Position: (0,0), Target: (9,1.5)")
