@@ -1,0 +1,11 @@
+%% plotting the arm and the obstacles
+optimal(1)=avals(optimalAIdx);
+optimal(2)=bvals(optimalBIdx);
+optimal(3)=cvals(optimalCIdx);
+optimal(4)=dvals(optimalDIdx);
+pos = trunkPos(nObst,optimal);
+
+plot(pos(:,1),pos(:,2),'-','LineWidth',3); axis equal;hold on;
+plot(targetX,targetY,'*','markersize',30); hold on;
+viscircles([xObs yObs],radiusObs*ones(nObst,1)); % Show circles
+axis([-1,1,-1,1]); 
