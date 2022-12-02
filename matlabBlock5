@@ -1,0 +1,52 @@
+% Store all combinations of (a,b,c) and minimize over all combs. for 
+% all 'd' to find overall minimum.
+globalMin = inf;
+arr=zeros(numA,numB,numC);
+
+% Perform minimization
+for q=1:numD
+    for i=1:numB
+        for j=1:numC
+            for k=1:numA
+                optimal(1)=avals(k);
+                optimal(2)=bvals(i);
+                optimal(3)=cvals(j);
+                optimal(4)=dvals(q);
+                
+                pos = trunkPos(n,optimal);
+                
+                for m=1:nObst
+                    r_obs=sqrt((pos(:,1)-xObs(m)).^2+(pos(:,2)-yObs(m)).^2);
+                    U_obs(m)=1*sum(0.25*(1+tanh(25*r_obs)).*(1+tanh(25*(radiusObs-r_obs))));
+                    %This function equals 1 inside the circular obstacles at
+                    %positions xobs and yobs each having R_obs radius. 
+                    % So the objective/cost function is increased by 1 each
+                    % time the elephant arm passes through one of these points.
+    
+                    % The minimization dislikes this occurrence, and so these
+                    % values are less likely to be the minimum when a value of
+                    % 1 is attained for the function (i.e., when a
+                    % configuration INTERSECTS an obstacle).
+                end
+                % The cost/obkjective function that needs to be minimized:
+                % The first term penalizes being away from the target point
+                % the second term penalizes passing through the obstacles
+                arr(k,i,j)=100*((pos(end,1)-targetX)^2+(pos(end,2)-targetY)^2)+sum(U_obs);
+            end
+        end
+    end
+    % the minimum of obj for d(q) 
+    [~, ind] = min(arr(:));
+    [bestA bestB bestC] = ind2sub(size(arr), ind);
+
+    % below we check to see if this local minimum is less that our global
+    % minimum up to that values of d(q). If yes, we replace the global
+    % minimum with this locl minimum value. 
+    if minimum<globalMin
+        optimalAIdx=bestA;
+        optimalBIdx=bestB;
+        optimalCIdx=bestC;
+        optimalDIdx=q;
+    end
+    globalMin=minimum;
+end
