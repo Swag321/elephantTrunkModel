@@ -1,0 +1,24 @@
+clc; clear all; close all;
+n = 40; % Number of segments
+targetX = 0.3;
+targetY = 0.7;
+% (n-1) = deg. of freedom
+
+nObst = 10; % Number of obstacles to avoid
+radiusObs = 0.04; % Radius of each circular object
+
+epsilon = 0.2;
+          % Random distance + noise parameter
+distObs = 0.4*rand(nObst,1) + epsilon;
+thetaObs = 2*pi*rand(nObst,1); % Relative angle from target to obst.
+xObs = targetX + distObs.*cos(thetaObs);
+yObs = targetY + distObs.*sin(thetaObs);
+
+% Tangent Vector (angle of orientation for arm) 
+% For complexity, let this be a cubic polynomial 
+
+% R^(4)-space to search over potential values
+numA=40;avals=linspace(-2*pi,2*pi,numA);
+numB=40;bvals=linspace(-2*pi,2*pi,numB);
+numC=40;cvals=linspace(-2*pi,2*pi,numC);
+numD=40;dvals=linspace(-2*pi,2*pi,numD);
