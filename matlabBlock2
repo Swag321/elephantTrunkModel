@@ -1,0 +1,25 @@
+% Choose top 100 -- reasoning: if we 'reverse' the interpolation of a set
+% of connected beams from a quadratic curve, the beams (straight lines)
+% might hit the obstacle from where the curve narrowly avoids them. Taking
+% best 100 or so allows for potential to obtain a 'pretty good'
+% orientation that's near the best we find.
+sortedPL = sortrows(paramLengths,3,'ascend');
+top100 = sortedPL(1:100,:);
+jointX = -top100(:,2) ./ (2*top100(:,1));
+
+configs = [];
+for i = 1:size(top100,1)
+    jy = arcQuad(top100(i,1),top100(i,2),jointX(i));
+    m = jy / jointX(i);
+    if m > (rectH / rectMinX)
+        % Are now above the top edge -- need to stay above top edge
+        % throughout width of this particular boundary
+        m2 = (targetY - jy) / (targetX - jointX(i));
+        if m2 > ( (targetY - rectMinY + rectH) / (rectMinX + rectW - targetX) )
+            xcoord = double(vpa(jointX(i)));
+            ycoord = double(vpa(jy));
+            configs = [configs; [xcoord ycoord computeJA(0,0,xcoord,ycoord) computeJA(xcoord,ycoord,targetX,targetY)]];
+        end
+    end
+end
+configs
